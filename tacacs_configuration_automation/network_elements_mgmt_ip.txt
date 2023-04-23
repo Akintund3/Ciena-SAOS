@@ -1,1 +1,2 @@
+#list of networks elements manegement ip
 
