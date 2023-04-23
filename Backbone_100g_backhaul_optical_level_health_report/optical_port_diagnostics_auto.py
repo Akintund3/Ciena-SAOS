@@ -11,11 +11,11 @@ from netmiko import NetMikoAuthenticationException, ConnectHandler, NetMikoTimeo
 from datetime import datetime
 import xlsxwriter
 
-
+#Login credentials
 username = input('Enter Username: ')
 password = getpass()
 
-
+#Creating dictionary representing the devices
 metro_cet = {
 'device_type': 'ciena_saos',
 'username': username,
@@ -23,15 +23,21 @@ metro_cet = {
 }
 
 
+#defining the date/time stamp
 dt = datetime.now()
 
+#defining the date/time stamp format
 t_stamp = dt.strftime("%d.%m.%Y_%H.%M.%S")
 
+
+#create the excel spreed sheet
 workbook = xlsxwriter.Workbook(f'<#directory>\\<Report_filename>_{t_stamp}.xlsx')
 
-
+#create the workbook on the excel spreed sheet
 worksheet_ng = workbook.add_worksheet('<#excel_file_worksheet_name>')
 
+
+#defining the format of the cells in the excel sprred sheet
 centre_bold = workbook.add_format({      
 'align': 'center',
 'bold': 1,
@@ -57,8 +63,10 @@ centre = workbook.add_format({
 })
 
 
+# class
 class Tx_BB_Core():
 
+    # init function
     def __init__(self) :
         pass
 
@@ -114,11 +122,15 @@ class Tx_BB_Core():
 
 
 
-     #route_central_eastern
+    #function route_central_eastern
 
     def central_eastern(self):
-
+        #nertwork elements   
+   
         hs = ['ne1_01', 'ne2_01', 'ne1_02', 'ne2_02' ]
+        
+        
+        #nertwork element mgmt ip and port dictionary
 
         ne_p = {'x11.x11.x11.x11' : '10g_p1', 
         'x21.x21.x21.x21' : '10g_p2', 
@@ -157,11 +169,11 @@ class Tx_BB_Core():
   
         
         
-        #ne1_01, ne2_01, ne1_02, ne2_02
+        #login for NEs
         
         for i in ne:
 
-                        
+            #login to NEs            
             central1 = {**metro_cet, 'host' : ne[0]}
             eastern1 = {**metro_cet, 'host' : ne[1]}
             central2 = {**metro_cet, 'host' : ne[2]}
@@ -169,14 +181,14 @@ class Tx_BB_Core():
 
 
         try:
-
+             # CLI inputs on the NEs
             net_ssh = ConnectHandler(**central1)    
             xc = net_ssh.send_command(f'port xc sh po {p[0]} diag')
             po = net_ssh.send_command(f'port sh po {p[0]}')
             hs = net_ssh.send_command('system show host-name')
 
 
-
+            # filtering CLI outputs on the NEs
             central1_des = ((po.splitlines()[4]).split('|')[2]).replace(' ', '')
             central1_op = ((po.splitlines()[6]).split('|')[2]).replace(' ', '')
             central1_admin = ((po.splitlines()[6]).split('|')[3]).replace(' ', '')
@@ -185,12 +197,12 @@ class Tx_BB_Core():
             central1_tx = ((xc.splitlines()[17]).split('|')[2]).replace(' ', '') + ' dBm'
             central1_rx = ((xc.splitlines()[23]).split('|')[2]).replace(' ', '') + ' dBm'
 
-
-            if 'no XCVR present' in xc:
-
+            
+            if 'no XCVR present' in xc:             #empty port
+                
                 print(f'SFP not detect, Please check {central1_name} Port {p[0]}')
         
-
+                #writing the CLI outputs on the excel
                 worksheet_ng.write('F12', central1_type, centre)
                 worksheet_ng.write('F13', central1_des, centre)
                 worksheet_ng.write('F14', central1_op, centre)
@@ -200,7 +212,7 @@ class Tx_BB_Core():
 
 
             else :      
-
+                #writing the CLI outputs on the excel
                 worksheet_ng.write('F12', central1_type, centre)
                 worksheet_ng.write('F13', central1_des, centre)
                 worksheet_ng.write('F14', central1_op, centre)
@@ -209,11 +221,11 @@ class Tx_BB_Core():
                 worksheet_ng.write('F17', central1_rx, centre)
 
 
-        except NetMikoAuthenticationException :
+        except NetMikoAuthenticationException :             #connection timed out/error
 
             print(f'{i} could not be reached or connection timed out !!!')
 
-
+            #writing the CLI outputs on the excel
             worksheet_ng.write('F12', 'N/A', centre)
             worksheet_ng.write('F13', 'N/A', centre)
             worksheet_ng.write('F14', 'N/A', centre)
@@ -223,13 +235,13 @@ class Tx_BB_Core():
 
 
         try:
-
+            # CLI inputs on the NEs
             net_ssh = ConnectHandler(**eastern1)    
             xc = net_ssh.send_command(f'port xc sh po {p[1]} diag')
             po = net_ssh.send_command(f'port sh po {p[1]}')
             hs = net_ssh.send_command('system show host-name')
 
-
+            # filtering CLI outputs on the NEs
             eastern1_des = ((po.splitlines()[4]).split('|')[2]).replace(' ', '')
             eastern1_op = ((po.splitlines()[6]).split('|')[2]).replace(' ', '')
             eastern1_admin = ((po.splitlines()[6]).split('|')[3]).replace(' ', '')
@@ -238,11 +250,11 @@ class Tx_BB_Core():
             eastern1_tx = ((xc.splitlines()[17]).split('|')[2]).replace(' ', '') + ' dBm'
             eastern1_rx = ((xc.splitlines()[23]).split('|')[2]).replace(' ', '') + ' dBm'
 
-
-            if 'no XCVR present' in xc:
+            
+            if 'no XCVR present' in xc:             #empty port
                 print(f'SFP not detect, Please check {eastern1_name} Port {p[1]}')
 
-
+                #writing the CLI outputs on the excel
                 worksheet_ng.write('G12', eastern1_type, centre)
                 worksheet_ng.write('G13', eastern1_des, centre)
                 worksheet_ng.write('G14', eastern1_op, centre)
@@ -253,7 +265,7 @@ class Tx_BB_Core():
 
 
             else :
-
+                #writing the CLI outputs on the excel
                 worksheet_ng.write('G12', eastern1_type, centre)
                 worksheet_ng.write('G13', eastern1_des, centre)
                 worksheet_ng.write('G14', eastern1_op, centre)
@@ -263,10 +275,10 @@ class Tx_BB_Core():
 
 
 
-        except NetMikoAuthenticationException :
+        except NetMikoAuthenticationException :                 #connection timed out/error
 
             print(f'{i} could not be reached or connection timed out !!!')
-
+            #writing the CLI outputs on the excel
             worksheet_ng.write('G12', 'N/A', centre)
             worksheet_ng.write('G13', 'N/A', centre)
             worksheet_ng.write('G14', 'N/A', centre)
@@ -276,13 +288,13 @@ class Tx_BB_Core():
 
 
         try:
-
+            # CLI inputs on the NEs
             net_ssh = ConnectHandler(**central2)    
             xc = net_ssh.send_command(f'port xc sh po {p[2]} diag')
             po = net_ssh.send_command(f'port sh po {p[2]}')
             hs = net_ssh.send_command('system show host-name')
 
-
+            # filtering CLI outputs on the NEs
             central2_des = ((po.splitlines()[4]).split('|')[2]).replace(' ', '')
             central2_op = ((po.splitlines()[6]).split('|')[2]).replace(' ', '')
             central2_admin = ((po.splitlines()[6]).split('|')[3]).replace(' ', '')
@@ -292,11 +304,11 @@ class Tx_BB_Core():
             central2_rx = ((xc.splitlines()[23]).split('|')[2]).replace(' ', '') + ' dBm'
 
 
-            if 'no XCVR present' in xc:
+            if 'no XCVR present' in xc:               #empty port         
 
                 print(f'SFP not detect, Please check {central2_name} Port {p[2]}')
 
-
+                #writing the CLI outputs on the excel
                 worksheet_ng.write('H12', central2_type, centre)
                 worksheet_ng.write('H13', central2_des, centre)
                 worksheet_ng.write('H14', central2_op, centre)
@@ -306,7 +318,7 @@ class Tx_BB_Core():
 
 
             else :
-
+                #writing the CLI outputs on the excel
                 worksheet_ng.write('H12', central2_type, centre)
                 worksheet_ng.write('H13', central2_des, centre)
                 worksheet_ng.write('H14', central2_op, centre)
@@ -315,10 +327,10 @@ class Tx_BB_Core():
                 worksheet_ng.write('H17', central2_rx, centre)
 
 
-        except NetMikoAuthenticationException :
+        except NetMikoAuthenticationException :                #empty port 
 
             print(f'{i} could not be reached or connection timed out !!!')
-
+            #writing the CLI outputs on the excel
             worksheet_ng.write('H12', 'N/A', centre)
             worksheet_ng.write('H13', 'N/A', centre)
             worksheet_ng.write('H14', 'N/A', centre)
@@ -328,13 +340,13 @@ class Tx_BB_Core():
 
 
         try:
-
+             # CLI inputs on the NEs
             net_ssh = ConnectHandler(**eastern2)    
             xc = net_ssh.send_command(f'port xc sh po {p[3]} diag')
             po = net_ssh.send_command(f'port sh po {p[3]}')
             hs = net_ssh.send_command('system show host-name')
 
-
+             # filtering CLI outputs on the NEs
             eastern2_des = ((po.splitlines()[4]).split('|')[2]).replace(' ', '')
             eastern2_op = ((po.splitlines()[6]).split('|')[2]).replace(' ', '')
             eastern2_admin = ((po.splitlines()[6]).split('|')[3]).replace(' ', '')
@@ -344,10 +356,10 @@ class Tx_BB_Core():
             eastern2_rx = ((xc.splitlines()[23]).split('|')[2]).replace(' ', '') + ' dBm'
 
 
-            if 'no XCVR present' in xc:
+            if 'no XCVR present' in xc:                     #empty port 
                 print(f'SFP not detect, Please check {eastern2_name} Port {p[3]}')
 
-
+                #writing the CLI outputs on the excel
                 worksheet_ng.write('I12', eastern2_type, centre)
                 worksheet_ng.write('I13', eastern2_des, centre)
                 worksheet_ng.write('I14', eastern2_op, centre)
@@ -357,7 +369,7 @@ class Tx_BB_Core():
 
 
             else :
-
+                #writing the CLI outputs on the excel
                 worksheet_ng.write('I12', eastern2_type, centre)
                 worksheet_ng.write('I13', eastern2_des, centre)
                 worksheet_ng.write('I14', eastern2_op, centre)
@@ -366,10 +378,11 @@ class Tx_BB_Core():
                 worksheet_ng.write('I17', eastern2_rx, centre)
 
 
-        except NetMikoAuthenticationException :
+        except NetMikoAuthenticationException :                      #empty port 
 
             print(f'{i} could not be reached or connection timed out !!!')
-
+            
+            #writing the CLI outputs on the excel
             worksheet_ng.write('I12', 'N/A', centre)
             worksheet_ng.write('I13', 'N/A', centre)
             worksheet_ng.write('I14', 'N/A', centre)
@@ -391,13 +404,13 @@ class Tx_BB_Core():
     #Western - Central route
     def western_central(self):
 
-
+        #nertwork elements
         hs = ['ne3_01', 'ne1_01']
-
+        #nertwork element mgmt ip and port dictionary
         ne_p = {'x31.x31.x31.x31' : ['100g_p11', '100g_p21'],
         'x11.x11.x11.x11' : ['100g_p11', '100g_p21'], 
                 }
-
+        #NE Ip address, port list
         ne = [i for i in ne_p.keys()]
         p = [j for j in ne_p.values()]
 
@@ -427,7 +440,7 @@ class Tx_BB_Core():
         worksheet_ng.write('M11', p[1][1], centre_bold)
 
         
-        #ne3_01, ne1_01
+        #login to NEs
         
         for i in ne:
                    
@@ -436,13 +449,15 @@ class Tx_BB_Core():
 
 
         try:
-
+            
+            # CLI inputs on the NEs
             net_ssh = ConnectHandler(**western)    
             xc = net_ssh.send_command(f'port xc sh po {p[0][0]} diag')
             po = net_ssh.send_command(f'port sh po {p[0][0]}')
             hs = net_ssh.send_command('system show host-name')
 
-
+            
+            # filtering CLI outputs on the NEs
 
             western_des = ((po.splitlines()[4]).split('|')[2]).replace(' ', '')
             western_op = ((po.splitlines()[6]).split('|')[2]).replace(' ', '')
@@ -460,12 +475,13 @@ class Tx_BB_Core():
             western_tx = [western1_tx, western2_tx, western3_tx, western4_tx]
             western_rx = [western1_rx, western2_rx, western3_rx, western4_rx]
 
-
-            if 'no XCVR present' in xc:
-
+            
+            if 'no XCVR present' in xc:                         #empty port
+                
+                #empty port
                 print(f'SFP not detect, Please check {western_name} Port {p[0][0]}')
         
-
+                #writing the CLI outputs on the excel                
                 worksheet_ng.write('J12', western_type, centre)
                 worksheet_ng.write('J13', western_des, centre)
                 worksheet_ng.write('J14', western_op, centre)
@@ -475,7 +491,8 @@ class Tx_BB_Core():
 
 
             else :      
-
+                
+                #writing the CLI outputs on the excel
                 worksheet_ng.write('J12', western_type, centre)
                 worksheet_ng.write('J13', western_des, centre)
                 worksheet_ng.write('J14', western_op, centre)
@@ -484,11 +501,11 @@ class Tx_BB_Core():
                 worksheet_ng.write('J17', '\n'.join(western_rx), centre)
 
 
-        except NetMikoAuthenticationException :
-
+        except NetMikoAuthenticationException :              #connection timed out/error
+           
             print(f'{i} could not be reached or connection timed out !!!')
 
-
+            #writing the CLI outputs on the excel
             worksheet_ng.write('J12', 'N/A', centre)
             worksheet_ng.write('J13', 'N/A', centre)
             worksheet_ng.write('J14', 'N/A', centre)
@@ -498,13 +515,13 @@ class Tx_BB_Core():
 
 
         try:
-
+            # CLI inputs on the NEs
             net_ssh = ConnectHandler(**central)    
             xc = net_ssh.send_command(f'port xc sh po {p[1][0]} diag')
             po = net_ssh.send_command(f'port sh po {p[1][0]}')
             hs = net_ssh.send_command('system show host-name')
 
-
+            # filtering CLI outputs on the NEs
             central_des = ((po.splitlines()[4]).split('|')[2]).replace(' ', '')
             central_op = ((po.splitlines()[6]).split('|')[2]).replace(' ', '')
             central_admin = ((po.splitlines()[6]).split('|')[3]).replace(' ', '')
@@ -523,11 +540,12 @@ class Tx_BB_Core():
 
 
 
-
-            if 'no XCVR present' in xc:
+            #writing the CLI outputs on the excel
+            if 'no XCVR present' in xc:                #empty port
+  
                 print(f'SFP not detect, Please check {central_name} Port {p[1][0]}')
 
-
+                #writing the CLI outputs on the excel
                 worksheet_ng.write('K12', central_type, centre)
                 worksheet_ng.write('K13', central_des, centre)
                 worksheet_ng.write('K14', central_op, centre)
@@ -538,7 +556,7 @@ class Tx_BB_Core():
 
 
             else :
-
+                #writing the CLI outputs on the excel
                 worksheet_ng.write('K12', central_type, centre)
                 worksheet_ng.write('K13', central_des, centre)
                 worksheet_ng.write('K14', central_op, centre)
@@ -548,10 +566,12 @@ class Tx_BB_Core():
 
 
 
-        except NetMikoAuthenticationException :
-
+        except NetMikoAuthenticationException :             #connection timed out/error
+            
+   
             print(f'{i} could not be reached or connection timed out !!!')
-
+            
+            #writing the CLI outputs on the excel
             worksheet_ng.write('K12', 'N/A', centre)
             worksheet_ng.write('K13', 'N/A', centre)
             worksheet_ng.write('K14', 'N/A', centre)
@@ -561,13 +581,14 @@ class Tx_BB_Core():
 
 
         try:
-
+            # CLI inputs on the NEs
             net_ssh = ConnectHandler(**western)    
             xc = net_ssh.send_command('port xc sh po 100g_p21 diag')
             po = net_ssh.send_command('port sh po 100g_p21')
             hs = net_ssh.send_command('system show host-name')
 
-
+            
+            # filtering CLI outputs on the NEs
 
             western_des = ((po.splitlines()[4]).split('|')[2]).replace(' ', '')
             western_op = ((po.splitlines()[6]).split('|')[2]).replace(' ', '')
@@ -586,12 +607,12 @@ class Tx_BB_Core():
             western_rx = [western1_rx, western2_rx, western3_rx, western4_rx]
 
 
-
-            if 'no XCVR present' in xc:
-
+           
+            if 'no XCVR present' in xc:                 #empty port
+   
                 print(f'SFP not detect, Please check {western_name} Port {p[0][1]}')
         
-
+                #writing the CLI outputs on the excel
                 worksheet_ng.write('J12', western_type, centre)
                 worksheet_ng.write('J13', western_des, centre)
                 worksheet_ng.write('J14', western_op, centre)
@@ -601,7 +622,8 @@ class Tx_BB_Core():
 
 
             else :      
-
+                
+                #writing the CLI outputs on the excel
                 worksheet_ng.write('L12', western_type, centre)
                 worksheet_ng.write('L13', western_des, centre)
                 worksheet_ng.write('L14', western_op, centre)
@@ -610,11 +632,12 @@ class Tx_BB_Core():
                 worksheet_ng.write('L17', '\n'.join(western_rx), centre)
 
 
-        except NetMikoAuthenticationException :
+        except NetMikoAuthenticationException :               #connection timed out/error
+            
 
             print(f'{i} could not be reached or connection timed out !!!')
 
-
+            #writing the CLI outputs on the excel
             worksheet_ng.write('L12', 'N/A', centre)
             worksheet_ng.write('L13', 'N/A', centre)
             worksheet_ng.write('L14', 'N/A', centre)
@@ -624,13 +647,13 @@ class Tx_BB_Core():
 
 
         try:
-
+            # CLI inputs on the NEs
             net_ssh = ConnectHandler(**central)    
             xc = net_ssh.send_command(f'port xc sh po {p[0][1]} diag')
             po = net_ssh.send_command(f'port sh po {p[0][1]}')
             hs = net_ssh.send_command('system show host-name')
 
-
+            # filtering CLI outputs on the NEs
             central_des = ((po.splitlines()[4]).split('|')[2]).replace(' ', '')
             central_op = ((po.splitlines()[6]).split('|')[2]).replace(' ', '')
             central_admin = ((po.splitlines()[6]).split('|')[3]).replace(' ', '')
@@ -647,11 +670,12 @@ class Tx_BB_Core():
             central_tx = [central1_tx, central2_tx, central3_tx, central4_tx]
             central_rx = [central1_rx, central2_rx, central3_rx, central4_rx]
 
+            
+            if 'no XCVR present' in xc:                  #empty port
 
-            if 'no XCVR present' in xc:
                 print(f'SFP not detect, Please check {central_name} Port {p[1][1]}')
 
-
+                #writing the CLI outputs on the excel
                 worksheet_ng.write('M12', central_type, centre)
                 worksheet_ng.write('M13', central_des, centre)
                 worksheet_ng.write('M14', central_op, centre)
@@ -662,7 +686,7 @@ class Tx_BB_Core():
 
 
             else :
-
+                #writing the CLI outputs on the excel
                 worksheet_ng.write('M12', central_type, centre)
                 worksheet_ng.write('M13', central_des, centre)
                 worksheet_ng.write('M14', central_op, centre)
@@ -672,10 +696,10 @@ class Tx_BB_Core():
 
 
 
-        except NetMikoAuthenticationException :
-
+        except NetMikoAuthenticationException :            #connection timed out/error
+    
             print(f'{i} could not be reached or connection timed out !!!')
-
+            #writing the CLI outputs on the excel
             worksheet_ng.write('M12', 'N/A', centre)
             worksheet_ng.write('M13', 'N/A', centre)
             worksheet_ng.write('M14', 'N/A', centre)
@@ -686,7 +710,7 @@ class Tx_BB_Core():
         print()
         print('Western - Central route Completed!')
 
-
+#function call
 Tx_BB_Core.central_eastern(Self)
 
 Tx_BB_Core.western_central(Self)
