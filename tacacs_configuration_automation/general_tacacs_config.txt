@@ -1,22 +1,30 @@
-tacacs add server 10.0.140.6 priority 1
-tacacs add server 10.0.140.9 priority 2
-tacacs add server 10.0.140.200 priority 3
+#Create and add TACACS Server
 
-tacacs enable server 10.0.140.6
-tacacs enable server 10.0.140.9
-tacacs enable server 10.0.140.200
+tacacs add server xx.xx.xx.xx priority 1
+tacacs add server yy.yy.yy.yy priority 2
+tacacs add server zz.zz.zz.zz priority 3
 
-tacacs authorization add server 10.0.140.6 priority 1
-tacacs authorization add server 10.0.140.9 priority 2
-tacacs authorization add server 10.0.140.200 priority 3
-tacacs authorization enable server 10.0.140.6
-tacacs authorization enable server 10.0.140.9
-tacacs authorization enable server 10.0.140.200 
+tacacs enable server xx.xx.xx.xx
+tacacs enable server yy.yy.yy.yy
+tacacs enable server zz.zz.zz.zz
 
-tacacs authentication add server 10.0.140.6 priority 1
-tacacs authentication add server 10.0.140.9 priority 2
-tacacs authentication add server 10.0.140.200 priority 3
-tacacs authentication enable server 10.0.140.6
-tacacs authentication enable server 10.0.140.9
-tacacs authentication enable server 10.0.140.200 
+
+#Create and add TACACS Server
+
+tacacs authorization add server xx.xx.xx.xx priority 1
+tacacs authorization add server yy.yy.yy.yy priority 2
+tacacs authorization add server zz.zz.zz.zz priority 3
+tacacs authorization enable server xx.xx.xx.xx
+tacacs authorization enable server yy.yy.yy.yy
+tacacs authorization enable server zz.zz.zz.zz 
+
+
+#Configure TACACS Authentication
+
+tacacs authentication add server xx.xx.xx.xx priority 1
+tacacs authentication add server yy.yy.yy.yy priority 2
+tacacs authentication add server zz.zz.zz.zz priority 3
+tacacs authentication enable server xx.xx.xx.xx
+tacacs authentication enable server yy.yy.yy.yy
+tacacs authentication enable server zz.zz.zz.zz 
 
