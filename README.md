@@ -1,5 +1,5 @@
 # Ciena-SAOS
-Network automatons on Ciena SAOS
+Network automations on Ciena SAOS
 
 This repository contains different automations tasks (within each folder) for Ciena SAOS:
 
