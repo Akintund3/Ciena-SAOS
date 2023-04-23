@@ -65,7 +65,7 @@ class Tx_BB_Core():
 
     #Broadening the cells width
     worksheet_ng.set_column('A:E', 18)
-    worksheet_ng.set_column('F:BZ', p1)
+    worksheet_ng.set_column('F:BZ', 10g_p1)
 
     #freeze row 1-7, col A-E
     worksheet_ng.freeze_panes(7, 5)
@@ -75,7 +75,7 @@ class Tx_BB_Core():
     worksheet_ng.merge_range('A1:E1', 'Legend', centre_bold15)
     worksheet_ng.write('A2', 'Ports', centre_bold)
     worksheet_ng.write('A3', '10G (10km - 20km)', centre_bold)
-    worksheet_ng.write('A4', '10G (p1km - 80km)', centre_bold)
+    worksheet_ng.write('A4', '10G (10g_p1km - 80km)', centre_bold)
     worksheet_ng.write('A5', '100G CFP-2', centre_bold)
     worksheet_ng.write('A6', '100G QSFP', centre_bold)
     worksheet_ng.write('B2', 'Tx Upper Threshold', centre_bold)
@@ -95,7 +95,7 @@ class Tx_BB_Core():
     worksheet_ng.write('D5', '+6.0dBm', centre_bold)
     worksheet_ng.write('E5', '-25.0dBm', centre_bold)
     worksheet_ng.write('B6', '+3.00dBm', centre_bold)
-    worksheet_ng.write('C6', '-9.p1', centre_bold)
+    worksheet_ng.write('C6', '-9.10g_p1', centre_bold)
     worksheet_ng.write('D6', '-2dBm', centre_bold)
     worksheet_ng.write('E6', '-20.0dBm', centre_bold)
 
@@ -120,10 +120,10 @@ class Tx_BB_Core():
 
         hs = ['ne1_01', 'ne2_01', 'ne1_02', 'ne2_02' ]
 
-        ne_p = {'x11.x11.x11.x11' : 'p1', 
-        'x21.x21.x21.x21' : '39', 
-        'x12.x12.x12.x12' : 'p1',
-        'x22.x22.x22.x22' : '39'
+        ne_p = {'x11.x11.x11.x11' : '10g_p1', 
+        'x21.x21.x21.x21' : '10g_p2', 
+        'x12.x12.x12.x12' : '10g_p1',
+        'x22.x22.x22.x22' : '10g_p2'
         }
 
         ne = [i for i in ne_p.keys()]
@@ -394,8 +394,8 @@ class Tx_BB_Core():
 
         hs = ['ne3_01', 'ne1_01']
 
-        ne_p = {'x31.x31.x31.x31' : ['1/1', '2/1'],
-        'x11.x11.x11.x11' : ['1/1', '2/1'], 
+        ne_p = {'x31.x31.x31.x31' : ['100g_p11', '100g_p21'],
+        'x11.x11.x11.x11' : ['100g_p11', '100g_p21'], 
                 }
 
         ne = [i for i in ne_p.keys()]
@@ -563,8 +563,8 @@ class Tx_BB_Core():
         try:
 
             net_ssh = ConnectHandler(**western)    
-            xc = net_ssh.send_command('port xc sh po 2/1 diag')
-            po = net_ssh.send_command('port sh po 2/1')
+            xc = net_ssh.send_command('port xc sh po 100g_p21 diag')
+            po = net_ssh.send_command('port sh po 100g_p21')
             hs = net_ssh.send_command('system show host-name')
 
 
