@@ -4,7 +4,7 @@ from getpass import getpass
 from operator import ne
 from netmiko import ConnectHandler, ConnectionException, NetMikoAuthenticationException, NetMikoTimeoutException
 
-#Enter the login credentials
+#Enter the login (default) credentials
 username = input('Enter Username: ')
 password = getpass()
 
