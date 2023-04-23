@@ -1,11 +1,26 @@
+#Set preferred source IP
+
 tacacs set preferred-source-ip <#management_IP>
+
+
+#Set TACACS key
+
 tacacs set key
+
+
+#Set Device Authentication method
 
 user auth set method tacacs priority 1
 user auth set method local priority 2
 
+
+#Enable TACACS
+
 tacacs enable
 tacacs authentication enable
 tacacs authorization enable
+
+
+#Save configuration
 
 configuration save
