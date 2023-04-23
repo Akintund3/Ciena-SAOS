@@ -1,0 +1,13 @@
+tacacs set key
+
+user auth set order tacacs,local
+user auth set method tacacs scope all 
+user auth set method local scope all
+
+tacacs enable
+tacacs authentication enable
+tacacs authorization enable
+
+configuration save
+
+
