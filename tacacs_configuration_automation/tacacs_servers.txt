@@ -1,3 +1,5 @@
-xx.xx.xx.xx    #primary tacacs sever
-yy.yy.yy.yy    #secondary tacacs sever
-zz.zz.zz.z     #tertiary tacacs sever
+#Ping to TACACS servers to ensure reachability 
+
+ping xx.xx.xx.xx    #primary tacacs sever
+ping yy.yy.yy.yy    #secondary tacacs sever
+ping zz.zz.zz.z     #tertiary tacacs sever
