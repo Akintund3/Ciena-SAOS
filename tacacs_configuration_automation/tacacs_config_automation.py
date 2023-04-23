@@ -7,19 +7,19 @@ username = input('Enter Username: ')
 password = getpass()
 
 
-with open('tacacs_ping.txt', 'r') as file:
+with open('tacacs_server.txt', 'r') as file:
     t_ping = file.readlines()
 
-with open('tacacs_cet.txt', 'r') as file:
+with open('network_elements_mgmt_ip.txt', 'r') as file:
     cet = file.readlines()
 
-with open('tacacs_config_gen.txt', 'r') as file:
+with open('general_tacacs_config.txt', 'r') as file:
     t_gen = file.readlines()
 
-with open('tacacs_saos6.txt', 'r') as file:
+with open('saos6_tacacs_config.txt', 'r') as file:
     s6 = file.readlines()
 
-with open('tacacs_saos8.txt', 'r') as file:
+with open('saos8_tacacs_config.txt', 'r') as file:
     s8 = file.readlines()
 
 
@@ -54,7 +54,7 @@ for i in cet:
                 net_ssh.send_config_set(t_gen)
                 tacacs_sh = net_ssh.send_command('tacacs show')
 
-                if '10.0.140.200' and '10.0.140.6' and '10.0.140.9' in tacacs_sh:
+                if 'zz.zz.zz.zz' and 'xx.xx.xx.xx' and 'yy.yy.yy.yy' in tacacs_sh:
 
                     saos_v = net_ssh.send_command('software show')
                     
