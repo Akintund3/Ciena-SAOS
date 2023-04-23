@@ -27,10 +27,10 @@ dt = datetime.now()
 
 t_stamp = dt.strftime("%d.%m.%Y_%H.%M.%S")
 
-workbook = xlsxwriter.Workbook(f'C:\\Users\\akintunde.adeniran\\OneDrive - mainone.net\\Desktop\Auto BH performance\\Mainone_Ciena_CET_Optical_Performance_check_{t_stamp}.xlsx')
+workbook = xlsxwriter.Workbook(f'<#directory>\\<Report_filename>_{t_stamp}.xlsx')
 
 
-worksheet_ng = workbook.add_worksheet('NG Tx Core')
+worksheet_ng = workbook.add_worksheet('<#excel_file_worksheet_name>')
 
 centre_bold = workbook.add_format({      
 'align': 'center',
@@ -57,7 +57,7 @@ centre = workbook.add_format({
 })
 
 
-class Tx_Lagos_Core():
+class Tx_BB_Core():
 
     def __init__(self) :
         pass
@@ -65,7 +65,7 @@ class Tx_Lagos_Core():
 
     #Broadening the cells width
     worksheet_ng.set_column('A:E', 18)
-    worksheet_ng.set_column('F:BZ', 40)
+    worksheet_ng.set_column('F:BZ', p1)
 
     #freeze row 1-7, col A-E
     worksheet_ng.freeze_panes(7, 5)
@@ -75,7 +75,7 @@ class Tx_Lagos_Core():
     worksheet_ng.merge_range('A1:E1', 'Legend', centre_bold15)
     worksheet_ng.write('A2', 'Ports', centre_bold)
     worksheet_ng.write('A3', '10G (10km - 20km)', centre_bold)
-    worksheet_ng.write('A4', '10G (40km - 80km)', centre_bold)
+    worksheet_ng.write('A4', '10G (p1km - 80km)', centre_bold)
     worksheet_ng.write('A5', '100G CFP-2', centre_bold)
     worksheet_ng.write('A6', '100G QSFP', centre_bold)
     worksheet_ng.write('B2', 'Tx Upper Threshold', centre_bold)
@@ -95,7 +95,7 @@ class Tx_Lagos_Core():
     worksheet_ng.write('D5', '+6.0dBm', centre_bold)
     worksheet_ng.write('E5', '-25.0dBm', centre_bold)
     worksheet_ng.write('B6', '+3.00dBm', centre_bold)
-    worksheet_ng.write('C6', '-9.40', centre_bold)
+    worksheet_ng.write('C6', '-9.p1', centre_bold)
     worksheet_ng.write('D6', '-2dBm', centre_bold)
     worksheet_ng.write('E6', '-20.0dBm', centre_bold)
 
@@ -114,16 +114,16 @@ class Tx_Lagos_Core():
 
 
 
+     #route_central_eastern
 
+    def central_eastern(self):
 
-    def saka_cls(self):
+        hs = ['ne1_01', 'ne2_01', 'ne1_02', 'ne2_02' ]
 
-        hs = ['Saka 5171_01', 'Ajah 5171_01', 'Saka 5171_02', 'Ajah 5171_02' ]
-
-        ne_p = {'172.20.38.249' : '40', 
-        '172.20.39.4' : '39', 
-        '172.20.38.250' : '40',
-        '172.20.39.5' : '39'
+        ne_p = {'x11.x11.x11.x11' : 'p1', 
+        'x21.x21.x21.x21' : '39', 
+        'x12.x12.x12.x12' : 'p1',
+        'x22.x22.x22.x22' : '39'
         }
 
         ne = [i for i in ne_p.keys()]
@@ -131,14 +131,14 @@ class Tx_Lagos_Core():
 
 
         #Route and POP
-        worksheet_ng.merge_range('F8:G8', 'SAKA - CLS (Pry: 30km)', centre_bold)
-        worksheet_ng.write('F9', 'SAKA POP', centre_bold)
-        worksheet_ng.write('G9', 'CLS', centre_bold)
+        worksheet_ng.merge_range('F8:G8', 'Route_ab (Pry: 30km)', centre_bold)
+        worksheet_ng.write('F9', 'central_pop', centre_bold)
+        worksheet_ng.write('G9', 'Eastern_pop', centre_bold)
 
         #Route and POP
-        worksheet_ng.merge_range('H8:I8', 'SAKA - CLS (Secondary: 28.2km)', centre_bold)
-        worksheet_ng.write('H9', 'SAKA POP', centre_bold)
-        worksheet_ng.write('I9', 'CLS', centre_bold)
+        worksheet_ng.merge_range('H8:I8', 'Route_ab (Secondary: 28.2km)', centre_bold)
+        worksheet_ng.write('H9', 'central_pop', centre_bold)
+        worksheet_ng.write('I9', 'Eastern_pop', centre_bold)
         
 
         #Devices
@@ -154,59 +154,59 @@ class Tx_Lagos_Core():
         worksheet_ng.write('I11', p[3], centre_bold)
 
 
-        #sak - cls route
+  
         
         
-        #ajah 5171_01, ajah 5171_02, saka 5171_01, saka 5171_02
+        #ne1_01, ne2_01, ne1_02, ne2_02
         
         for i in ne:
 
                         
-            sak1 = {**metro_cet, 'host' : ne[0]}
-            cls1 = {**metro_cet, 'host' : ne[1]}
-            sak2 = {**metro_cet, 'host' : ne[2]}
-            cls2 = {**metro_cet, 'host' : ne[3]}
+            central1 = {**metro_cet, 'host' : ne[0]}
+            eastern1 = {**metro_cet, 'host' : ne[1]}
+            central2 = {**metro_cet, 'host' : ne[2]}
+            eastern2 = {**metro_cet, 'host' : ne[3]}
 
 
         try:
 
-            net_ssh = ConnectHandler(**sak1)    
+            net_ssh = ConnectHandler(**central1)    
             xc = net_ssh.send_command(f'port xc sh po {p[0]} diag')
             po = net_ssh.send_command(f'port sh po {p[0]}')
             hs = net_ssh.send_command('system show host-name')
 
 
 
-            sak1_des = ((po.splitlines()[4]).split('|')[2]).replace(' ', '')
-            sak1_op = ((po.splitlines()[6]).split('|')[2]).replace(' ', '')
-            sak1_admin = ((po.splitlines()[6]).split('|')[3]).replace(' ', '')
-            sak1_type = ((po.splitlines()[5]).split('|')[2]).replace(' ', '')
-            sak1_name = ((hs.splitlines()[2]).split('|')[2]).replace(' ', '')
-            sak1_tx = ((xc.splitlines()[17]).split('|')[2]).replace(' ', '') + ' dBm'
-            sak1_rx = ((xc.splitlines()[23]).split('|')[2]).replace(' ', '') + ' dBm'
+            central1_des = ((po.splitlines()[4]).split('|')[2]).replace(' ', '')
+            central1_op = ((po.splitlines()[6]).split('|')[2]).replace(' ', '')
+            central1_admin = ((po.splitlines()[6]).split('|')[3]).replace(' ', '')
+            central1_type = ((po.splitlines()[5]).split('|')[2]).replace(' ', '')
+            central1_name = ((hs.splitlines()[2]).split('|')[2]).replace(' ', '')
+            central1_tx = ((xc.splitlines()[17]).split('|')[2]).replace(' ', '') + ' dBm'
+            central1_rx = ((xc.splitlines()[23]).split('|')[2]).replace(' ', '') + ' dBm'
 
 
             if 'no XCVR present' in xc:
 
-                print(f'SFP not detect, Please check {sak1_name} Port {p[0]}')
+                print(f'SFP not detect, Please check {central1_name} Port {p[0]}')
         
 
-                worksheet_ng.write('F12', sak1_type, centre)
-                worksheet_ng.write('F13', sak1_des, centre)
-                worksheet_ng.write('F14', sak1_op, centre)
-                worksheet_ng.write('F15', sak1_admin, centre)
+                worksheet_ng.write('F12', central1_type, centre)
+                worksheet_ng.write('F13', central1_des, centre)
+                worksheet_ng.write('F14', central1_op, centre)
+                worksheet_ng.write('F15', central1_admin, centre)
                 worksheet_ng.write('F16', 'SFP not found', centre)
                 worksheet_ng.write('F17', 'SFP not found', centre)
 
 
             else :      
 
-                worksheet_ng.write('F12', sak1_type, centre)
-                worksheet_ng.write('F13', sak1_des, centre)
-                worksheet_ng.write('F14', sak1_op, centre)
-                worksheet_ng.write('F15', sak1_admin, centre)
-                worksheet_ng.write('F16', sak1_tx, centre)
-                worksheet_ng.write('F17', sak1_rx, centre)
+                worksheet_ng.write('F12', central1_type, centre)
+                worksheet_ng.write('F13', central1_des, centre)
+                worksheet_ng.write('F14', central1_op, centre)
+                worksheet_ng.write('F15', central1_admin, centre)
+                worksheet_ng.write('F16', central1_tx, centre)
+                worksheet_ng.write('F17', central1_rx, centre)
 
 
         except NetMikoAuthenticationException :
@@ -224,29 +224,29 @@ class Tx_Lagos_Core():
 
         try:
 
-            net_ssh = ConnectHandler(**cls1)    
+            net_ssh = ConnectHandler(**eastern1)    
             xc = net_ssh.send_command(f'port xc sh po {p[1]} diag')
             po = net_ssh.send_command(f'port sh po {p[1]}')
             hs = net_ssh.send_command('system show host-name')
 
 
-            cls1_des = ((po.splitlines()[4]).split('|')[2]).replace(' ', '')
-            cls1_op = ((po.splitlines()[6]).split('|')[2]).replace(' ', '')
-            cls1_admin = ((po.splitlines()[6]).split('|')[3]).replace(' ', '')
-            cls1_type = ((po.splitlines()[5]).split('|')[2]).replace(' ', '')
-            cls1_name = ((hs.splitlines()[2]).split('|')[2]).replace(' ', '')
-            cls1_tx = ((xc.splitlines()[17]).split('|')[2]).replace(' ', '') + ' dBm'
-            cls1_rx = ((xc.splitlines()[23]).split('|')[2]).replace(' ', '') + ' dBm'
+            eastern1_des = ((po.splitlines()[4]).split('|')[2]).replace(' ', '')
+            eastern1_op = ((po.splitlines()[6]).split('|')[2]).replace(' ', '')
+            eastern1_admin = ((po.splitlines()[6]).split('|')[3]).replace(' ', '')
+            eastern1_type = ((po.splitlines()[5]).split('|')[2]).replace(' ', '')
+            eastern1_name = ((hs.splitlines()[2]).split('|')[2]).replace(' ', '')
+            eastern1_tx = ((xc.splitlines()[17]).split('|')[2]).replace(' ', '') + ' dBm'
+            eastern1_rx = ((xc.splitlines()[23]).split('|')[2]).replace(' ', '') + ' dBm'
 
 
             if 'no XCVR present' in xc:
-                print(f'SFP not detect, Please check {cls1_name} Port {p[1]}')
+                print(f'SFP not detect, Please check {eastern1_name} Port {p[1]}')
 
 
-                worksheet_ng.write('G12', cls1_type, centre)
-                worksheet_ng.write('G13', cls1_des, centre)
-                worksheet_ng.write('G14', cls1_op, centre)
-                worksheet_ng.write('G15', cls1_admin, centre)
+                worksheet_ng.write('G12', eastern1_type, centre)
+                worksheet_ng.write('G13', eastern1_des, centre)
+                worksheet_ng.write('G14', eastern1_op, centre)
+                worksheet_ng.write('G15', eastern1_admin, centre)
                 worksheet_ng.write('G16', 'SFP not found', centre)
                 worksheet_ng.write('G17', 'SFP not found', centre)
 
@@ -254,12 +254,12 @@ class Tx_Lagos_Core():
 
             else :
 
-                worksheet_ng.write('G12', cls1_type, centre)
-                worksheet_ng.write('G13', cls1_des, centre)
-                worksheet_ng.write('G14', cls1_op, centre)
-                worksheet_ng.write('G15', cls1_admin, centre)
-                worksheet_ng.write('G16', cls1_tx, centre)
-                worksheet_ng.write('G17', cls1_rx, centre)
+                worksheet_ng.write('G12', eastern1_type, centre)
+                worksheet_ng.write('G13', eastern1_des, centre)
+                worksheet_ng.write('G14', eastern1_op, centre)
+                worksheet_ng.write('G15', eastern1_admin, centre)
+                worksheet_ng.write('G16', eastern1_tx, centre)
+                worksheet_ng.write('G17', eastern1_rx, centre)
 
 
 
@@ -277,42 +277,42 @@ class Tx_Lagos_Core():
 
         try:
 
-            net_ssh = ConnectHandler(**sak2)    
+            net_ssh = ConnectHandler(**central2)    
             xc = net_ssh.send_command(f'port xc sh po {p[2]} diag')
             po = net_ssh.send_command(f'port sh po {p[2]}')
             hs = net_ssh.send_command('system show host-name')
 
 
-            sak2_des = ((po.splitlines()[4]).split('|')[2]).replace(' ', '')
-            sak2_op = ((po.splitlines()[6]).split('|')[2]).replace(' ', '')
-            sak2_admin = ((po.splitlines()[6]).split('|')[3]).replace(' ', '')
-            sak2_type = ((po.splitlines()[5]).split('|')[2]).replace(' ', '')
-            sak2_name = ((hs.splitlines()[2]).split('|')[2]).replace(' ', '')
-            sak2_tx = ((xc.splitlines()[17]).split('|')[2]).replace(' ', '') + ' dBm'
-            sak2_rx = ((xc.splitlines()[23]).split('|')[2]).replace(' ', '') + ' dBm'
+            central2_des = ((po.splitlines()[4]).split('|')[2]).replace(' ', '')
+            central2_op = ((po.splitlines()[6]).split('|')[2]).replace(' ', '')
+            central2_admin = ((po.splitlines()[6]).split('|')[3]).replace(' ', '')
+            central2_type = ((po.splitlines()[5]).split('|')[2]).replace(' ', '')
+            central2_name = ((hs.splitlines()[2]).split('|')[2]).replace(' ', '')
+            central2_tx = ((xc.splitlines()[17]).split('|')[2]).replace(' ', '') + ' dBm'
+            central2_rx = ((xc.splitlines()[23]).split('|')[2]).replace(' ', '') + ' dBm'
 
 
             if 'no XCVR present' in xc:
 
-                print(f'SFP not detect, Please check {sak2_name} Port {p[2]}')
+                print(f'SFP not detect, Please check {central2_name} Port {p[2]}')
 
 
-                worksheet_ng.write('H12', sak2_type, centre)
-                worksheet_ng.write('H13', sak2_des, centre)
-                worksheet_ng.write('H14', sak2_op, centre)
-                worksheet_ng.write('H15', sak2_admin, centre)
+                worksheet_ng.write('H12', central2_type, centre)
+                worksheet_ng.write('H13', central2_des, centre)
+                worksheet_ng.write('H14', central2_op, centre)
+                worksheet_ng.write('H15', central2_admin, centre)
                 worksheet_ng.write('H16', 'SFP not found', centre)
                 worksheet_ng.write('H17', 'SFP not found', centre)
 
 
             else :
 
-                worksheet_ng.write('H12', sak2_type, centre)
-                worksheet_ng.write('H13', sak2_des, centre)
-                worksheet_ng.write('H14', sak2_op, centre)
-                worksheet_ng.write('H15', sak2_admin, centre)
-                worksheet_ng.write('H16', sak2_tx, centre)
-                worksheet_ng.write('H17', sak2_rx, centre)
+                worksheet_ng.write('H12', central2_type, centre)
+                worksheet_ng.write('H13', central2_des, centre)
+                worksheet_ng.write('H14', central2_op, centre)
+                worksheet_ng.write('H15', central2_admin, centre)
+                worksheet_ng.write('H16', central2_tx, centre)
+                worksheet_ng.write('H17', central2_rx, centre)
 
 
         except NetMikoAuthenticationException :
@@ -329,41 +329,41 @@ class Tx_Lagos_Core():
 
         try:
 
-            net_ssh = ConnectHandler(**cls2)    
+            net_ssh = ConnectHandler(**eastern2)    
             xc = net_ssh.send_command(f'port xc sh po {p[3]} diag')
             po = net_ssh.send_command(f'port sh po {p[3]}')
             hs = net_ssh.send_command('system show host-name')
 
 
-            cls2_des = ((po.splitlines()[4]).split('|')[2]).replace(' ', '')
-            cls2_op = ((po.splitlines()[6]).split('|')[2]).replace(' ', '')
-            cls2_admin = ((po.splitlines()[6]).split('|')[3]).replace(' ', '')
-            cls2_type = ((po.splitlines()[5]).split('|')[2]).replace(' ', '')
-            cls2_name = ((hs.splitlines()[2]).split('|')[2]).replace(' ', '')
-            cls2_tx = ((xc.splitlines()[17]).split('|')[2]).replace(' ', '') + ' dBm'
-            cls2_rx = ((xc.splitlines()[23]).split('|')[2]).replace(' ', '') + ' dBm'
+            eastern2_des = ((po.splitlines()[4]).split('|')[2]).replace(' ', '')
+            eastern2_op = ((po.splitlines()[6]).split('|')[2]).replace(' ', '')
+            eastern2_admin = ((po.splitlines()[6]).split('|')[3]).replace(' ', '')
+            eastern2_type = ((po.splitlines()[5]).split('|')[2]).replace(' ', '')
+            eastern2_name = ((hs.splitlines()[2]).split('|')[2]).replace(' ', '')
+            eastern2_tx = ((xc.splitlines()[17]).split('|')[2]).replace(' ', '') + ' dBm'
+            eastern2_rx = ((xc.splitlines()[23]).split('|')[2]).replace(' ', '') + ' dBm'
 
 
             if 'no XCVR present' in xc:
-                print(f'SFP not detect, Please check {cls2_name} Port {p[3]}')
+                print(f'SFP not detect, Please check {eastern2_name} Port {p[3]}')
 
 
-                worksheet_ng.write('I12', cls2_type, centre)
-                worksheet_ng.write('I13', cls2_des, centre)
-                worksheet_ng.write('I14', cls2_op, centre)
-                worksheet_ng.write('I15', cls2_admin, centre)
+                worksheet_ng.write('I12', eastern2_type, centre)
+                worksheet_ng.write('I13', eastern2_des, centre)
+                worksheet_ng.write('I14', eastern2_op, centre)
+                worksheet_ng.write('I15', eastern2_admin, centre)
                 worksheet_ng.write('I16', 'SFP not found', centre)
                 worksheet_ng.write('I17', 'SFP not found', centre)
 
 
             else :
 
-                worksheet_ng.write('I12', cls2_type, centre)
-                worksheet_ng.write('I13', cls2_des, centre)
-                worksheet_ng.write('I14', cls2_op, centre)
-                worksheet_ng.write('I15', cls2_admin, centre)
-                worksheet_ng.write('I16', cls2_tx, centre)
-                worksheet_ng.write('I17', cls2_rx, centre)
+                worksheet_ng.write('I12', eastern2_type, centre)
+                worksheet_ng.write('I13', eastern2_des, centre)
+                worksheet_ng.write('I14', eastern2_op, centre)
+                worksheet_ng.write('I15', eastern2_admin, centre)
+                worksheet_ng.write('I16', eastern2_tx, centre)
+                worksheet_ng.write('I17', eastern2_rx, centre)
 
 
         except NetMikoAuthenticationException :
@@ -378,7 +378,7 @@ class Tx_Lagos_Core():
             worksheet_ng.write('I17', 'N/A', centre)
 
         print()
-        print('Saka - CLS route Completed!')
+        print('Central - Eastern_pop route Completed!')
 
 
 
@@ -388,14 +388,14 @@ class Tx_Lagos_Core():
 
 
 
-    #Ikeja - Saka route
-    def ikeja_saka(self):
+    #Western - Central route
+    def western_central(self):
 
 
-        hs = ['Ikeja 5171_01', 'Saka 5171_01']
+        hs = ['ne3_01', 'ne1_01']
 
-        ne_p = {'172.20.38.252' : ['1/1', '2/1'],
-        '172.20.38.249' : ['1/1', '2/1'], 
+        ne_p = {'x31.x31.x31.x31' : ['1/1', '2/1'],
+        'x11.x11.x11.x11' : ['1/1', '2/1'], 
                 }
 
         ne = [i for i in ne_p.keys()]
@@ -404,15 +404,15 @@ class Tx_Lagos_Core():
 
 
 
-        ##Ikeja - Saka route pry 
-        worksheet_ng.merge_range('J8:K8', 'IKEJA - SAKA First Ring (34km)', centre_bold)
-        worksheet_ng.write('J9', 'IKEJA POP', centre_bold)
-        worksheet_ng.write('K9', 'SAKA POP', centre_bold)
+        #western - Central route pry 
+        worksheet_ng.merge_range('J8:K8', 'Western - Central First Ring (34km)', centre_bold)
+        worksheet_ng.write('J9', 'Western POP', centre_bold)
+        worksheet_ng.write('K9', 'central_pop', centre_bold)
 
-        #Ikeja - Saka route secondary
-        worksheet_ng.merge_range('L8:M8', 'IKEJA - SAKA Second Ring (41km)', centre_bold)
-        worksheet_ng.write('L9', 'IKEJA POP', centre_bold)
-        worksheet_ng.write('M9', 'SAKA POP', centre_bold)
+        #western - Central route secondary
+        worksheet_ng.merge_range('L8:M8', 'Western - Central Second Ring (41km)', centre_bold)
+        worksheet_ng.write('L9', 'Western POP', centre_bold)
+        worksheet_ng.write('M9', 'central_pop', centre_bold)
 
         #Devices
         worksheet_ng.write('J10', hs[0], centre_bold)
@@ -426,62 +426,62 @@ class Tx_Lagos_Core():
         worksheet_ng.write('L11', p[0][1], centre_bold)
         worksheet_ng.write('M11', p[1][1], centre_bold)
 
-        #ikeja 5171_01, saka 5171_01
-
+        
+        #ne3_01, ne1_01
         
         for i in ne:
                    
-            ikj = {**metro_cet, 'host' : ne[0]}
-            sak = {**metro_cet, 'host' : ne[1]}
+            western = {**metro_cet, 'host' : ne[0]}
+            central = {**metro_cet, 'host' : ne[1]}
 
 
         try:
 
-            net_ssh = ConnectHandler(**ikj)    
+            net_ssh = ConnectHandler(**western)    
             xc = net_ssh.send_command(f'port xc sh po {p[0][0]} diag')
             po = net_ssh.send_command(f'port sh po {p[0][0]}')
             hs = net_ssh.send_command('system show host-name')
 
 
 
-            ikj_des = ((po.splitlines()[4]).split('|')[2]).replace(' ', '')
-            ikj_op = ((po.splitlines()[6]).split('|')[2]).replace(' ', '')
-            ikj_admin = ((po.splitlines()[6]).split('|')[3]).replace(' ', '')
-            ikj_type = ((po.splitlines()[5]).split('|')[2]).replace(' ', '')
-            ikj_name = ((hs.splitlines()[2]).split('|')[2]).replace(' ', '')
-            ikj1_tx = ((xc.splitlines()[36]).split('|')[3]).replace(' ', '') + ' dBm'
-            ikj2_tx = ((xc.splitlines()[51]).split('|')[3]).replace(' ', '') + ' dBm'
-            ikj3_tx = ((xc.splitlines()[66]).split('|')[3]).replace(' ', '') + ' dBm'
-            ikj4_tx = ((xc.splitlines()[81]).split('|')[3]).replace(' ', '') + ' dBm'
-            ikj1_rx = ((xc.splitlines()[42]).split('|')[3]).replace(' ', '') + ' dBm'
-            ikj2_rx = ((xc.splitlines()[57]).split('|')[3]).replace(' ', '') + ' dBm'
-            ikj3_rx = ((xc.splitlines()[72]).split('|')[3]).replace(' ', '') + ' dBm'
-            ikj4_rx = ((xc.splitlines()[87]).split('|')[3]).replace(' ', '') + ' dBm'
-            ikj_tx = [ikj1_tx, ikj2_tx, ikj3_tx, ikj4_tx]
-            ikj_rx = [ikj1_rx, ikj2_rx, ikj3_rx, ikj4_rx]
+            western_des = ((po.splitlines()[4]).split('|')[2]).replace(' ', '')
+            western_op = ((po.splitlines()[6]).split('|')[2]).replace(' ', '')
+            western_admin = ((po.splitlines()[6]).split('|')[3]).replace(' ', '')
+            western_type = ((po.splitlines()[5]).split('|')[2]).replace(' ', '')
+            western_name = ((hs.splitlines()[2]).split('|')[2]).replace(' ', '')
+            western1_tx = ((xc.splitlines()[36]).split('|')[3]).replace(' ', '') + ' dBm'
+            western2_tx = ((xc.splitlines()[51]).split('|')[3]).replace(' ', '') + ' dBm'
+            western3_tx = ((xc.splitlines()[66]).split('|')[3]).replace(' ', '') + ' dBm'
+            western4_tx = ((xc.splitlines()[81]).split('|')[3]).replace(' ', '') + ' dBm'
+            western1_rx = ((xc.splitlines()[42]).split('|')[3]).replace(' ', '') + ' dBm'
+            western2_rx = ((xc.splitlines()[57]).split('|')[3]).replace(' ', '') + ' dBm'
+            western3_rx = ((xc.splitlines()[72]).split('|')[3]).replace(' ', '') + ' dBm'
+            western4_rx = ((xc.splitlines()[87]).split('|')[3]).replace(' ', '') + ' dBm'
+            western_tx = [western1_tx, western2_tx, western3_tx, western4_tx]
+            western_rx = [western1_rx, western2_rx, western3_rx, western4_rx]
 
 
             if 'no XCVR present' in xc:
 
-                print(f'SFP not detect, Please check {ikj_name} Port {p[0][0]}')
+                print(f'SFP not detect, Please check {western_name} Port {p[0][0]}')
         
 
-                worksheet_ng.write('J12', ikj_type, centre)
-                worksheet_ng.write('J13', ikj_des, centre)
-                worksheet_ng.write('J14', ikj_op, centre)
-                worksheet_ng.write('J15', ikj_admin, centre)
+                worksheet_ng.write('J12', western_type, centre)
+                worksheet_ng.write('J13', western_des, centre)
+                worksheet_ng.write('J14', western_op, centre)
+                worksheet_ng.write('J15', western_admin, centre)
                 worksheet_ng.write('J16', 'SFP not found', centre)
                 worksheet_ng.write('J17', 'SFP not found', centre)
 
 
             else :      
 
-                worksheet_ng.write('J12', ikj_type, centre)
-                worksheet_ng.write('J13', ikj_des, centre)
-                worksheet_ng.write('J14', ikj_op, centre)
-                worksheet_ng.write('J15', ikj_admin, centre)
-                worksheet_ng.write('J16', '\n'.join(ikj_tx), centre)
-                worksheet_ng.write('J17', '\n'.join(ikj_rx), centre)
+                worksheet_ng.write('J12', western_type, centre)
+                worksheet_ng.write('J13', western_des, centre)
+                worksheet_ng.write('J14', western_op, centre)
+                worksheet_ng.write('J15', western_admin, centre)
+                worksheet_ng.write('J16', '\n'.join(western_tx), centre)
+                worksheet_ng.write('J17', '\n'.join(western_rx), centre)
 
 
         except NetMikoAuthenticationException :
@@ -499,39 +499,39 @@ class Tx_Lagos_Core():
 
         try:
 
-            net_ssh = ConnectHandler(**sak)    
+            net_ssh = ConnectHandler(**central)    
             xc = net_ssh.send_command(f'port xc sh po {p[1][0]} diag')
             po = net_ssh.send_command(f'port sh po {p[1][0]}')
             hs = net_ssh.send_command('system show host-name')
 
 
-            sak_des = ((po.splitlines()[4]).split('|')[2]).replace(' ', '')
-            sak_op = ((po.splitlines()[6]).split('|')[2]).replace(' ', '')
-            sak_admin = ((po.splitlines()[6]).split('|')[3]).replace(' ', '')
-            sak_type = ((po.splitlines()[5]).split('|')[2]).replace(' ', '')
-            sak_name = ((hs.splitlines()[2]).split('|')[2]).replace(' ', '')
-            sak1_tx = ((xc.splitlines()[36]).split('|')[3]).replace(' ', '') + ' dBm'
-            sak2_tx = ((xc.splitlines()[51]).split('|')[3]).replace(' ', '') + ' dBm'
-            sak3_tx = ((xc.splitlines()[66]).split('|')[3]).replace(' ', '') + ' dBm'
-            sak4_tx = ((xc.splitlines()[81]).split('|')[3]).replace(' ', '') + ' dBm'
-            sak1_rx = ((xc.splitlines()[42]).split('|')[3]).replace(' ', '') + ' dBm'
-            sak2_rx = ((xc.splitlines()[57]).split('|')[3]).replace(' ', '') + ' dBm'
-            sak3_rx = ((xc.splitlines()[72]).split('|')[3]).replace(' ', '') + ' dBm'
-            sak4_rx = ((xc.splitlines()[87]).split('|')[3]).replace(' ', '') + ' dBm'
-            sak_tx = [sak1_tx, sak2_tx, sak3_tx, sak4_tx]
-            sak_rx = [sak1_rx, sak2_rx, sak3_rx, sak4_rx]
+            central_des = ((po.splitlines()[4]).split('|')[2]).replace(' ', '')
+            central_op = ((po.splitlines()[6]).split('|')[2]).replace(' ', '')
+            central_admin = ((po.splitlines()[6]).split('|')[3]).replace(' ', '')
+            central_type = ((po.splitlines()[5]).split('|')[2]).replace(' ', '')
+            central_name = ((hs.splitlines()[2]).split('|')[2]).replace(' ', '')
+            central1_tx = ((xc.splitlines()[36]).split('|')[3]).replace(' ', '') + ' dBm'
+            central2_tx = ((xc.splitlines()[51]).split('|')[3]).replace(' ', '') + ' dBm'
+            central3_tx = ((xc.splitlines()[66]).split('|')[3]).replace(' ', '') + ' dBm'
+            central4_tx = ((xc.splitlines()[81]).split('|')[3]).replace(' ', '') + ' dBm'
+            central1_rx = ((xc.splitlines()[42]).split('|')[3]).replace(' ', '') + ' dBm'
+            central2_rx = ((xc.splitlines()[57]).split('|')[3]).replace(' ', '') + ' dBm'
+            central3_rx = ((xc.splitlines()[72]).split('|')[3]).replace(' ', '') + ' dBm'
+            central4_rx = ((xc.splitlines()[87]).split('|')[3]).replace(' ', '') + ' dBm'
+            central_tx = [central1_tx, central2_tx, central3_tx, central4_tx]
+            central_rx = [central1_rx, central2_rx, central3_rx, central4_rx]
 
 
 
 
             if 'no XCVR present' in xc:
-                print(f'SFP not detect, Please check {sak_name} Port {p[1][0]}')
+                print(f'SFP not detect, Please check {central_name} Port {p[1][0]}')
 
 
-                worksheet_ng.write('K12', sak_type, centre)
-                worksheet_ng.write('K13', sak_des, centre)
-                worksheet_ng.write('K14', sak_op, centre)
-                worksheet_ng.write('K15', sak_admin, centre)
+                worksheet_ng.write('K12', central_type, centre)
+                worksheet_ng.write('K13', central_des, centre)
+                worksheet_ng.write('K14', central_op, centre)
+                worksheet_ng.write('K15', central_admin, centre)
                 worksheet_ng.write('K16', 'SFP not found', centre)
                 worksheet_ng.write('K17', 'SFP not found', centre)
 
@@ -539,12 +539,12 @@ class Tx_Lagos_Core():
 
             else :
 
-                worksheet_ng.write('K12', sak_type, centre)
-                worksheet_ng.write('K13', sak_des, centre)
-                worksheet_ng.write('K14', sak_op, centre)
-                worksheet_ng.write('K15', sak_admin, centre)
-                worksheet_ng.write('K16', '\n'.join(sak_tx), centre)
-                worksheet_ng.write('K17', '\n'.join(sak_rx), centre)
+                worksheet_ng.write('K12', central_type, centre)
+                worksheet_ng.write('K13', central_des, centre)
+                worksheet_ng.write('K14', central_op, centre)
+                worksheet_ng.write('K15', central_admin, centre)
+                worksheet_ng.write('K16', '\n'.join(central_tx), centre)
+                worksheet_ng.write('K17', '\n'.join(central_rx), centre)
 
 
 
@@ -562,52 +562,52 @@ class Tx_Lagos_Core():
 
         try:
 
-            net_ssh = ConnectHandler(**ikj)    
+            net_ssh = ConnectHandler(**western)    
             xc = net_ssh.send_command('port xc sh po 2/1 diag')
             po = net_ssh.send_command('port sh po 2/1')
             hs = net_ssh.send_command('system show host-name')
 
 
 
-            ikj_des = ((po.splitlines()[4]).split('|')[2]).replace(' ', '')
-            ikj_op = ((po.splitlines()[6]).split('|')[2]).replace(' ', '')
-            ikj_admin = ((po.splitlines()[6]).split('|')[3]).replace(' ', '')
-            ikj_type = ((po.splitlines()[5]).split('|')[2]).replace(' ', '')
-            ikj_name = ((hs.splitlines()[2]).split('|')[2]).replace(' ', '')
-            ikj1_tx = ((xc.splitlines()[36]).split('|')[3]).replace(' ', '') + ' dBm'
-            ikj2_tx = ((xc.splitlines()[51]).split('|')[3]).replace(' ', '') + ' dBm'
-            ikj3_tx = ((xc.splitlines()[66]).split('|')[3]).replace(' ', '') + ' dBm'
-            ikj4_tx = ((xc.splitlines()[81]).split('|')[3]).replace(' ', '') + ' dBm'
-            ikj1_rx = ((xc.splitlines()[42]).split('|')[3]).replace(' ', '') + ' dBm'
-            ikj2_rx = ((xc.splitlines()[57]).split('|')[3]).replace(' ', '') + ' dBm'
-            ikj3_rx = ((xc.splitlines()[72]).split('|')[3]).replace(' ', '') + ' dBm'
-            ikj4_rx = ((xc.splitlines()[87]).split('|')[3]).replace(' ', '') + ' dBm'
-            ikj_tx = [ikj1_tx, ikj2_tx, ikj3_tx, ikj4_tx]
-            ikj_rx = [ikj1_rx, ikj2_rx, ikj3_rx, ikj4_rx]
+            western_des = ((po.splitlines()[4]).split('|')[2]).replace(' ', '')
+            western_op = ((po.splitlines()[6]).split('|')[2]).replace(' ', '')
+            western_admin = ((po.splitlines()[6]).split('|')[3]).replace(' ', '')
+            western_type = ((po.splitlines()[5]).split('|')[2]).replace(' ', '')
+            western_name = ((hs.splitlines()[2]).split('|')[2]).replace(' ', '')
+            western1_tx = ((xc.splitlines()[36]).split('|')[3]).replace(' ', '') + ' dBm'
+            western2_tx = ((xc.splitlines()[51]).split('|')[3]).replace(' ', '') + ' dBm'
+            western3_tx = ((xc.splitlines()[66]).split('|')[3]).replace(' ', '') + ' dBm'
+            western4_tx = ((xc.splitlines()[81]).split('|')[3]).replace(' ', '') + ' dBm'
+            western1_rx = ((xc.splitlines()[42]).split('|')[3]).replace(' ', '') + ' dBm'
+            western2_rx = ((xc.splitlines()[57]).split('|')[3]).replace(' ', '') + ' dBm'
+            western3_rx = ((xc.splitlines()[72]).split('|')[3]).replace(' ', '') + ' dBm'
+            western4_rx = ((xc.splitlines()[87]).split('|')[3]).replace(' ', '') + ' dBm'
+            western_tx = [western1_tx, western2_tx, western3_tx, western4_tx]
+            western_rx = [western1_rx, western2_rx, western3_rx, western4_rx]
 
 
 
             if 'no XCVR present' in xc:
 
-                print(f'SFP not detect, Please check {ikj_name} Port {p[0][1]}')
+                print(f'SFP not detect, Please check {western_name} Port {p[0][1]}')
         
 
-                worksheet_ng.write('J12', ikj_type, centre)
-                worksheet_ng.write('J13', ikj_des, centre)
-                worksheet_ng.write('J14', ikj_op, centre)
-                worksheet_ng.write('J15', ikj_admin, centre)
+                worksheet_ng.write('J12', western_type, centre)
+                worksheet_ng.write('J13', western_des, centre)
+                worksheet_ng.write('J14', western_op, centre)
+                worksheet_ng.write('J15', western_admin, centre)
                 worksheet_ng.write('J16', 'SFP not found', centre)
                 worksheet_ng.write('J17', 'SFP not found', centre)
 
 
             else :      
 
-                worksheet_ng.write('L12', ikj_type, centre)
-                worksheet_ng.write('L13', ikj_des, centre)
-                worksheet_ng.write('L14', ikj_op, centre)
-                worksheet_ng.write('L15', ikj_admin, centre)
-                worksheet_ng.write('L16', '\n'.join(ikj_tx), centre)
-                worksheet_ng.write('L17', '\n'.join(ikj_rx), centre)
+                worksheet_ng.write('L12', western_type, centre)
+                worksheet_ng.write('L13', western_des, centre)
+                worksheet_ng.write('L14', western_op, centre)
+                worksheet_ng.write('L15', western_admin, centre)
+                worksheet_ng.write('L16', '\n'.join(western_tx), centre)
+                worksheet_ng.write('L17', '\n'.join(western_rx), centre)
 
 
         except NetMikoAuthenticationException :
@@ -625,37 +625,37 @@ class Tx_Lagos_Core():
 
         try:
 
-            net_ssh = ConnectHandler(**sak)    
+            net_ssh = ConnectHandler(**central)    
             xc = net_ssh.send_command(f'port xc sh po {p[0][1]} diag')
             po = net_ssh.send_command(f'port sh po {p[0][1]}')
             hs = net_ssh.send_command('system show host-name')
 
 
-            sak_des = ((po.splitlines()[4]).split('|')[2]).replace(' ', '')
-            sak_op = ((po.splitlines()[6]).split('|')[2]).replace(' ', '')
-            sak_admin = ((po.splitlines()[6]).split('|')[3]).replace(' ', '')
-            sak_type = ((po.splitlines()[5]).split('|')[2]).replace(' ', '')
-            sak_name = ((hs.splitlines()[2]).split('|')[2]).replace(' ', '')
-            sak1_tx = ((xc.splitlines()[36]).split('|')[3]).replace(' ', '') + ' dBm'
-            sak2_tx = ((xc.splitlines()[51]).split('|')[3]).replace(' ', '') + ' dBm'
-            sak3_tx = ((xc.splitlines()[66]).split('|')[3]).replace(' ', '') + ' dBm'
-            sak4_tx = ((xc.splitlines()[81]).split('|')[3]).replace(' ', '') + ' dBm'
-            sak1_rx = ((xc.splitlines()[42]).split('|')[3]).replace(' ', '') + ' dBm'
-            sak2_rx = ((xc.splitlines()[57]).split('|')[3]).replace(' ', '') + ' dBm'
-            sak3_rx = ((xc.splitlines()[72]).split('|')[3]).replace(' ', '') + ' dBm'
-            sak4_rx = ((xc.splitlines()[87]).split('|')[3]).replace(' ', '') + ' dBm'
-            sak_tx = [sak1_tx, sak2_tx, sak3_tx, sak4_tx]
-            sak_rx = [sak1_rx, sak2_rx, sak3_rx, sak4_rx]
+            central_des = ((po.splitlines()[4]).split('|')[2]).replace(' ', '')
+            central_op = ((po.splitlines()[6]).split('|')[2]).replace(' ', '')
+            central_admin = ((po.splitlines()[6]).split('|')[3]).replace(' ', '')
+            central_type = ((po.splitlines()[5]).split('|')[2]).replace(' ', '')
+            central_name = ((hs.splitlines()[2]).split('|')[2]).replace(' ', '')
+            central1_tx = ((xc.splitlines()[36]).split('|')[3]).replace(' ', '') + ' dBm'
+            central2_tx = ((xc.splitlines()[51]).split('|')[3]).replace(' ', '') + ' dBm'
+            central3_tx = ((xc.splitlines()[66]).split('|')[3]).replace(' ', '') + ' dBm'
+            central4_tx = ((xc.splitlines()[81]).split('|')[3]).replace(' ', '') + ' dBm'
+            central1_rx = ((xc.splitlines()[42]).split('|')[3]).replace(' ', '') + ' dBm'
+            central2_rx = ((xc.splitlines()[57]).split('|')[3]).replace(' ', '') + ' dBm'
+            central3_rx = ((xc.splitlines()[72]).split('|')[3]).replace(' ', '') + ' dBm'
+            central4_rx = ((xc.splitlines()[87]).split('|')[3]).replace(' ', '') + ' dBm'
+            central_tx = [central1_tx, central2_tx, central3_tx, central4_tx]
+            central_rx = [central1_rx, central2_rx, central3_rx, central4_rx]
 
 
             if 'no XCVR present' in xc:
-                print(f'SFP not detect, Please check {sak_name} Port {p[1][1]}')
+                print(f'SFP not detect, Please check {central_name} Port {p[1][1]}')
 
 
-                worksheet_ng.write('M12', sak_type, centre)
-                worksheet_ng.write('M13', sak_des, centre)
-                worksheet_ng.write('M14', sak_op, centre)
-                worksheet_ng.write('M15', sak_admin, centre)
+                worksheet_ng.write('M12', central_type, centre)
+                worksheet_ng.write('M13', central_des, centre)
+                worksheet_ng.write('M14', central_op, centre)
+                worksheet_ng.write('M15', central_admin, centre)
                 worksheet_ng.write('M16', 'SFP not found', centre)
                 worksheet_ng.write('M17', 'SFP not found', centre)
 
@@ -663,12 +663,12 @@ class Tx_Lagos_Core():
 
             else :
 
-                worksheet_ng.write('M12', sak_type, centre)
-                worksheet_ng.write('M13', sak_des, centre)
-                worksheet_ng.write('M14', sak_op, centre)
-                worksheet_ng.write('M15', sak_admin, centre)
-                worksheet_ng.write('M16', '\n'.join(sak_tx), centre)
-                worksheet_ng.write('M17', '\n'.join(sak_rx), centre)
+                worksheet_ng.write('M12', central_type, centre)
+                worksheet_ng.write('M13', central_des, centre)
+                worksheet_ng.write('M14', central_op, centre)
+                worksheet_ng.write('M15', central_admin, centre)
+                worksheet_ng.write('M16', '\n'.join(central_tx), centre)
+                worksheet_ng.write('M17', '\n'.join(central_rx), centre)
 
 
 
@@ -684,12 +684,12 @@ class Tx_Lagos_Core():
             worksheet_ng.write('M17', 'N/A', centre)
 
         print()
-        print('Ikeja - Saka route Completed!')
+        print('Western - Central route Completed!')
 
 
-Tx_Lagos_Core.saka_cls(Self)
+Tx_BB_Core.central_eastern(Self)
 
-Tx_Lagos_Core.ikeja_saka(Self)
+Tx_BB_Core.western_central(Self)
 
 
 print()
