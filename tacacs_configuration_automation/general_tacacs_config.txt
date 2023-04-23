@@ -1,0 +1,22 @@
+tacacs add server 10.0.140.6 priority 1
+tacacs add server 10.0.140.9 priority 2
+tacacs add server 10.0.140.200 priority 3
+
+tacacs enable server 10.0.140.6
+tacacs enable server 10.0.140.9
+tacacs enable server 10.0.140.200
+
+tacacs authorization add server 10.0.140.6 priority 1
+tacacs authorization add server 10.0.140.9 priority 2
+tacacs authorization add server 10.0.140.200 priority 3
+tacacs authorization enable server 10.0.140.6
+tacacs authorization enable server 10.0.140.9
+tacacs authorization enable server 10.0.140.200 
+
+tacacs authentication add server 10.0.140.6 priority 1
+tacacs authentication add server 10.0.140.9 priority 2
+tacacs authentication add server 10.0.140.200 priority 3
+tacacs authentication enable server 10.0.140.6
+tacacs authentication enable server 10.0.140.9
+tacacs authentication enable server 10.0.140.200 
+
