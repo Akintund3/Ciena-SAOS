@@ -1,0 +1,3 @@
+xx.xx.xx.xx    #primary tacacs sever
+yy.yy.yy.yy    #secondary tacacs sever
+zz.zz.zz.z     #tertiary tacacs sever
