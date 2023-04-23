@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/bin/bash
 
 from getpass import getpass
 from operator import ne
